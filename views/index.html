@@ -43,7 +43,7 @@
             <div class="form-group form-group-sm">
                 <label for="img" class="col-md-2 control-label">Image's URL:</label>
                 <div class="col-md-8">
-                    <input class="form-control" type="text" name="img" value="{{ image_location }}">   
+                    <input class="form-control" type="text" name="img" value="{{ image_location|default('', true) }}">   
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-default">Check metadata</button>                    
