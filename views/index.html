@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <style>
+        .own-container {
+            column-count: 2;
+            column-gap: 19px;
+            
+            padding: 10px 0;
+        }
+        
+        .own-container > * {
+            break-inside: avoid;
+        }
+    
+    </style>    
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Image metadata information viewer <small>&ndash; Built by <a href="http://josetomastocino.com">José Tomás Tocino</a></small></h1>          
+
+            <p>
+                This is a simple metadata viewer based on <a href="http://exif.regex.info/exif.cgi">Jeffrey Friedl's Image Metadata Viewer</a>. As Jeffrey added a reCaptcha to his viewer, it no longer worked with some automated scripts I had, so I decided to create my own.
+            </p>  
+        </div>
+
+        <form action="" class="form-horizontal">
+            <div class="form-group form-group-sm">
+                <label for="img" class="col-md-2 control-label">Image's URL:</label>
+                <div class="col-md-8">
+                    <input class="form-control" type="text" name="img" value="{{ image_location }}">   
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-default">Check metadata</button>                    
+                </div>
+            </div>
+        </form>   
+
+        <hr>             
+        
+        <div class="own-container">
+            {% for key in metadata_sorted_keys %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <strong>{{ key }}</strong>
+                        </div>
+                        <table class="table table-condensed">
+                            <tbody>
+                                {% for item in metadata[key].keys() %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ item }}</strong>
+                                        </td>
+                                        <td>
+                                            {{ metadata[key][item] }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}                               
+                            </tbody>
+                        </table>
+                    </div> <!-- .panel -->                
+            {% endfor %}        
+        </div> <!-- .row -->
+    </div> <!-- .container -->    
+</body>
+</html>
