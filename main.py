@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import datetime
 import subprocess
 import requests
 import logging
 import json
 from StringIO import StringIO
-import os
+from pymongo import MongoClient
+import os, sys
 from bottle import route, run, request
 from bottle import jinja2_view as view, jinja2_template as template
 
@@ -15,9 +17,26 @@ logger = logging.getLogger(__name__)
 
 exiftool_location = 'exiftool/exiftool'
 
+MONGODB_FULL_URI = os.environ.get('MONGODB_URI')
+MONGODB_URI, MONGODB_DB = MONGODB_FULL_URI.rsplit('/', 1)
+
 @route('/favicon.ico')
 def get_favicon():
     return ''
+
+
+@route('/list')
+@view('list')
+def list_images():
+    # TODO: add auth
+
+    client = MongoClient(MONGODB_FULL_URI)
+    db = client[MONGODB_DB]
+
+    images = db['images'].find().sort("date")
+
+    return {'images': images}
+
 
 @route('/')
 @view('index')
@@ -109,8 +128,16 @@ def fetch_data():
         # Get a sorted list of metadata keys
         template_data['metadata_sorted_keys'] = sorted(metadata.keys())
 
+        # Logging image into mongodb:
+        client = MongoClient(MONGODB_FULL_URI)
+        db = client[MONGODB_DB]
 
-    
+        db['images'].insert_one({
+            'ip': request.remote_addr,
+            'date': datetime.datetime.utcnow(),
+            'image': image_location
+        })
+
     return template_data
     
 run(host='0.0.0.0', port=os.environ.get('PORT', 5000))
