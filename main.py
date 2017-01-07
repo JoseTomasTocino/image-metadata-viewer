@@ -47,7 +47,9 @@ def fetch_data():
         f = StringIO(response.content)
 
         logging.info("Running exiftool process...")
-        process = subprocess.Popen([exiftool_location, '-g0', '-j', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        process = subprocess.Popen([exiftool_location, '-g0', '-j', '-c', '%+.6f', '-'],
+                                   stdin=subprocess.PIPE,
+                                   stdout=subprocess.PIPE)
         output, output_err = process.communicate(f.read())
 
         # TODO: check for errors running process
@@ -89,8 +91,12 @@ def fetch_data():
                     m['ExposureMode'], m['ExposureTime'], m['FNumber'], m['ISO']
                 )
 
-        if 'Composite' in metadata and 'LensID' in metadata['Composite']:
-            basic_info['Lens'] = metadata['Composite']['LensID']
+        if 'Composite' in metadata:
+            if 'GPSLongitude' in metadata['Composite'] and 'GPSLatitude' in metadata['Composite']:
+                template_data['has_location'] = True
+                
+            if 'LensID' in metadata['Composite']:
+                basic_info['Lens'] = metadata['Composite']['LensID']
 
         metadata['Basic'] = basic_info
 

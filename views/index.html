@@ -1,7 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,15 +8,19 @@
     <title>Image metadata viewer</title>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <style>
         .own-container {
             column-count: 2;
             column-gap: 19px;
-            
+            column-fill: balance;
+	    -moz-column-fill: balance;
+            -webkit-column-fill: balance;
             padding: 10px 0;
         }
         
@@ -25,59 +28,99 @@
             break-inside: avoid;
         }
     
-    </style>    
+
+    </style>
+
 </head>
 
 <body>
 
-    <div class="container">
-        <div class="page-header">
-            <h1>Image metadata viewer <small>&ndash; Built by <a href="http://josetomastocino.com">José Tomás Tocino</a></small></h1>          
+<div class="container">
+    <div class="page-header">
+        <h1>Image metadata viewer
+            <small>&ndash; Built by <a href="http://josetomastocino.com">José Tomás Tocino</a></small>
+        </h1>
 
-            <p>
-                This is a simple metadata viewer based on <a href="http://exif.regex.info/exif.cgi">Jeffrey Friedl's Image Metadata Viewer</a>. As Jeffrey added a reCaptcha to his viewer, it no longer worked with some automated scripts I had, so I decided to create my own, and here it is :)
+        <p>
+            This is a simple metadata viewer based on <a href="http://exif.regex.info/exif.cgi">Jeffrey Friedl's Image
+            Metadata Viewer</a>. As Jeffrey added a reCaptcha to his viewer, it no longer worked with some automated
+            scripts I had, so I decided to create my own, and here it is :)
 
-                This viewer can be easily accessed by using the <a href="https://chrome.google.com/webstore/detail/send-to-exif-viewer/gogiienhpamfmodmlnhdljokkjiapfck/reviews">Send to Exif Viewer</a> Chrome extension.
-            </p>  
-        </div>
+            This viewer can be easily accessed by using the <a
+                href="https://chrome.google.com/webstore/detail/send-to-exif-viewer/gogiienhpamfmodmlnhdljokkjiapfck/reviews">Send
+            to Exif Viewer</a> Chrome extension.
+        </p>
+    </div>
 
-        <form action="" class="form-horizontal">
-            <div class="form-group form-group-sm">
-                <label for="img" class="col-md-2 control-label">Image's URL:</label>
-                <div class="col-md-8">
-                    <input class="form-control" type="text" name="img" value="{{ image_location|default('', true) }}">   
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-default">Check metadata</button>                    
-                </div>
+    <form action="" class="form-horizontal">
+        <div class="form-group form-group-sm">
+            <label for="img" class="col-md-2 control-label">Image's URL:</label>
+            <div class="col-md-8">
+                <input class="form-control" type="text" name="img" value="{{ image_location|default('', true) }}">
             </div>
-        </form>   
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-default">Check metadata</button>
+            </div>
+        </div>
+    </form>
 
-        <hr>             
-        
-        <div class="own-container">
-            {% for key in metadata_sorted_keys %}
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong>{{ key }}</strong>
-                        </div>
-                        <table class="table table-condensed">
-                            <tbody>
-                                {% for item in metadata[key].keys() %}
-                                    <tr>
-                                        <td>
-                                            <strong>{{ item }}</strong>
-                                        </td>
-                                        <td>
-                                            {{ metadata[key][item] }}
-                                        </td>
-                                    </tr>
-                                {% endfor %}                               
-                            </tbody>
-                        </table>
-                    </div> <!-- .panel -->                
-            {% endfor %}        
-        </div> <!-- .row -->
-    </div> <!-- .container -->    
+    <hr>
+
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- ImageMetadataViewer -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-0745898310693904"
+             data-ad-slot="9277007110"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+
+    <hr>
+
+    <div class="own-container">
+        {% if has_location %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Image GPS Location</strong>
+            </div>
+
+            <div class="panel-body" style="padding: 0">
+                <iframe width="100%" height="450" frameborder="0" style="border:0"
+                        src="https://www.google.com/maps/embed/v1/place?q={{ metadata['Composite']['GPSLatitude'] }}%2C%20{{ metadata['Composite']['GPSLongitude'] }}&key=AIzaSyB9BULKRE6lP3rr3reAasSyYGq2kpyvSyc"
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+        {% endif %}
+
+
+        {% for key in metadata_sorted_keys %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>{{ key }}</strong>
+            </div>
+            <table class="table table-condensed">
+                <tbody>
+                {% for item in metadata[key].keys()|sort %}
+                <tr>
+                    <td>
+                        <strong>{{ item }}</strong>
+                    </td>
+                    <td>
+                        {{ metadata[key][item] }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+</div> <!-- .container -->
 </body>
 </html>
