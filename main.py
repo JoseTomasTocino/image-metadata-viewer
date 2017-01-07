@@ -85,7 +85,10 @@ def fetch_data():
             if 'Model' in metadata['EXIF']:
                 basic_info['Camera'] = metadata['EXIF']['Model']
 
-            if set(['ExposureMode','ExposureTime', 'FNumber', 'ISO']) <= set(metadata['EXIF'].keys()):
+            if 'LensModel' in metadata['EXIF']:
+                basic_info['LensModel'] = metadata['EXIF']['LensModel']
+
+            if {'ExposureMode', 'ExposureTime', 'FNumber', 'ISO'} <= set(metadata['EXIF'].keys()):
                 m = metadata['EXIF']
                 basic_info['Exposure'] = '{}, {}, {}, ISO {}'.format(
                     m['ExposureMode'], m['ExposureTime'], m['FNumber'], m['ISO']
@@ -97,6 +100,7 @@ def fetch_data():
                 
             if 'LensID' in metadata['Composite']:
                 basic_info['Lens'] = metadata['Composite']['LensID']
+
 
         metadata['Basic'] = basic_info
 
