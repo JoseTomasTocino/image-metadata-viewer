@@ -161,13 +161,16 @@ def fetch_data():
         # Get a sorted list of metadata keys
         template_data['metadata_sorted_keys'] = sorted(metadata.keys())
 
+        # Try to get the referer
+        referer = request.GET.get('page', request.headers.get('Referer', '/'))
+
         # Logging image into mongodb:
         client = pymongo.MongoClient(MONGODB_FULL_URI)
         db = client[MONGODB_DB]
 
         db['images'].insert_one({
             'ip': request.remote_addr,
-            'referrer': request.headers.get('Referer', '/').strip(),
+            'referrer': referer.strip(),
             'date': datetime.datetime.utcnow(),
             'image': image_location
         })
