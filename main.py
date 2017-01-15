@@ -167,7 +167,7 @@ def fetch_data():
 
         db['images'].insert_one({
             'ip': request.remote_addr,
-            'referrer': request.referrer,
+            'referrer': request.headers.get('Referer', '/').strip(),
             'date': datetime.datetime.utcnow(),
             'image': image_location
         })
