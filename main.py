@@ -7,7 +7,7 @@ import requests
 import logging
 import json
 from StringIO import StringIO
-from pymongo import MongoClient
+import pymongo
 import os, sys
 from bottle import route, run, request
 from bottle import jinja2_view as view, jinja2_template as template
@@ -15,10 +15,12 @@ from bottle import jinja2_view as view, jinja2_template as template
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-exiftool_location = 'exiftool/exiftool'
+EXIFTOOL_PATH = 'exiftool/exiftool'
 
 MONGODB_FULL_URI = os.environ.get('MONGODB_URI')
 MONGODB_URI, MONGODB_DB = MONGODB_FULL_URI.rsplit('/', 1)
+
+ELEMENTS_PER_PAGE = 50
 
 @route('/favicon.ico')
 def get_favicon():
@@ -30,12 +32,43 @@ def get_favicon():
 def list_images():
     # TODO: add auth
 
-    client = MongoClient(MONGODB_FULL_URI)
+    page = request.GET.get('page', default=0, type=int)
+
+    client = pymongo.MongoClient(MONGODB_FULL_URI)
     db = client[MONGODB_DB]
+    total_images = db['images'].find().sort("date", pymongo.DESCENDING)
+    num_total_images = total_images.count()
+    images = total_images.skip(page * ELEMENTS_PER_PAGE).limit(ELEMENTS_PER_PAGE)
+    num_pages = int(num_total_images / ELEMENTS_PER_PAGE)
 
-    images = db['images'].find().sort("date")
+    page_shortcuts = []
 
-    return {'images': images}
+    # Add first three pages
+    page_shortcuts.append(0)
+    if num_pages > 1: page_shortcuts.append(1)
+    if num_pages > 2: page_shortcuts.append(2)
+
+    # Add last two pages
+    page_shortcuts.append(num_pages - 1)
+    page_shortcuts.append(num_pages - 2)
+    page_shortcuts.append(num_pages - 3)
+
+    # Add page before and after current_page
+    page_shortcuts.append(page - 1)
+    page_shortcuts.append(page + 1)
+
+    # Add current page
+    page_shortcuts.append(page)
+
+    # Remove duplicates and sort pages
+    page_shortcuts = sorted(set(x for x in page_shortcuts if x >= 0 and x < num_pages))
+
+    return {
+        'images': images,
+        'current_page': page,
+        'total_pages': num_pages,
+        'page_shortcuts': page_shortcuts
+    }
 
 
 @route('/')
@@ -66,7 +99,7 @@ def fetch_data():
         f = StringIO(response.content)
 
         logging.info("Running exiftool process...")
-        process = subprocess.Popen([exiftool_location, '-g0', '-j', '-c', '%+.6f', '-'],
+        process = subprocess.Popen([EXIFTOOL_PATH, '-g0', '-j', '-c', '%+.6f', '-'],
                                    stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE)
         output, output_err = process.communicate(f.read())
@@ -129,11 +162,12 @@ def fetch_data():
         template_data['metadata_sorted_keys'] = sorted(metadata.keys())
 
         # Logging image into mongodb:
-        client = MongoClient(MONGODB_FULL_URI)
+        client = pymongo.MongoClient(MONGODB_FULL_URI)
         db = client[MONGODB_DB]
 
         db['images'].insert_one({
             'ip': request.remote_addr,
+            'referrer': request.referrer,
             'date': datetime.datetime.utcnow(),
             'image': image_location
         })

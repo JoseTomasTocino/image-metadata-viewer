@@ -18,14 +18,41 @@
 
 <body>
 
-<div class="container">
+<div class="container-fluid">
     {% for image in images %}
-        <div>
-            {{ image.ip }} @ {{ image.date.strftime("%Y-%m-%d %H:%M:%S") }}<br>
-            <img src="{{ image.image }}" style="max-width: 100vw; max-height: 100vh;">
-        </div>
+    <div>
+        {{ image.ip }} @ {{ image.date.strftime("%Y-%m-%d %H:%M:%S") }} from <a href="{{image.referrer}}">{{image.referrer}}</a><br>
+        <img src="{{ image.image }}" style="max-width: 100vw; max-height: 100vh;">
+    </div>
 
     {% endfor %}
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if current_page != 0 %}
+            <li>
+                <a href="/list?page={{current_page - 1}}" aria-label="Previous">
+                    <span aria-hidden="true">PREVIOUS PAGE</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for p in page_shortcuts %}
+
+            <li {% if p == current_page %} class="active"{% endif %}><a href="/list?page={{p}}">{{ p+1 }}</a></li>
+
+            {% endfor %}
+
+            {% if current_page != total_pages - 1 %}
+            <li>
+                <a href="/list?page={{current_page + 1}}" aria-label="Next">
+                    <span aria-hidden="true">NEXT PAGE</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
 </div> <!-- .container -->
 </body>
 </html>
+
