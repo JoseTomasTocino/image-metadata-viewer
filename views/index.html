@@ -83,6 +83,15 @@
     <hr>
 
     <div class="own-container">
+        {% if image_location %}
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Image preview</strong></div>
+            <div class="panel-body">
+                <img src="{{image_location}}" alt="" style="max-width: 100%">
+            </div>
+        </div>
+        {% endif %}
+
         {% if has_location %}
         <div class="panel panel-default">
             <div class="panel-heading">
