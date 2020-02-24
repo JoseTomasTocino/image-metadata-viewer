@@ -27,6 +27,11 @@ def get_favicon():
     return ''
 
 
+@route('/ads.txt')
+def get_ads():
+    return 'google.com, pub-0745898310693904, DIRECT, f08c47fec0942fa0'
+
+
 @route('/list')
 @view('list')
 def list_images():
