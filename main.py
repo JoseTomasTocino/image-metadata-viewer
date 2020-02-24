@@ -20,6 +20,8 @@ EXIFTOOL_PATH = 'exiftool/exiftool'
 MONGODB_FULL_URI = os.environ.get('MONGODB_URI')
 MONGODB_URI, MONGODB_DB = MONGODB_FULL_URI.rsplit('/', 1)
 
+MONGODB_FULL_URI = MONGODB_FULL_URI + "?retryWrites=false"
+
 ELEMENTS_PER_PAGE = 50
 
 @route('/favicon.ico')
