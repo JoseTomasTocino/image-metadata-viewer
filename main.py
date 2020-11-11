@@ -7,7 +7,7 @@ import requests
 import logging
 import json
 from StringIO import StringIO
-import pymongo
+# import pymongo
 import os, sys
 from bottle import route, run, request
 from bottle import jinja2_view as view, jinja2_template as template
@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 EXIFTOOL_PATH = 'exiftool/exiftool'
 
-MONGODB_FULL_URI = os.environ.get('MONGODB_URI')
-MONGODB_URI, MONGODB_DB = MONGODB_FULL_URI.rsplit('/', 1)
+# MONGODB_FULL_URI = os.environ.get('MONGODB_URI')
+# MONGODB_URI, MONGODB_DB = MONGODB_FULL_URI.rsplit('/', 1)
 
-MONGODB_FULL_URI = MONGODB_FULL_URI + "?retryWrites=false"
+# MONGODB_FULL_URI = MONGODB_FULL_URI + "?retryWrites=false"
 
 ELEMENTS_PER_PAGE = 50
 
@@ -34,48 +34,48 @@ def get_ads():
     return 'google.com, pub-0745898310693904, DIRECT, f08c47fec0942fa0'
 
 
-@route('/list')
-@view('list')
-def list_images():
-    # TODO: add auth
+# @route('/list')
+# @view('list')
+# def list_images():
+#     # TODO: add auth
 
-    page = request.GET.get('page', default=0, type=int)
+#     page = request.GET.get('page', default=0, type=int)
 
-    client = pymongo.MongoClient(MONGODB_FULL_URI)
-    db = client[MONGODB_DB]
-    total_images = db['images'].find().sort("date", pymongo.DESCENDING)
-    num_total_images = total_images.count()
-    images = total_images.skip(page * ELEMENTS_PER_PAGE).limit(ELEMENTS_PER_PAGE)
-    num_pages = int(num_total_images / ELEMENTS_PER_PAGE)
+#     client = pymongo.MongoClient(MONGODB_FULL_URI)
+#     db = client[MONGODB_DB]
+#     total_images = db['images'].find().sort("date", pymongo.DESCENDING)
+#     num_total_images = total_images.count()
+#     images = total_images.skip(page * ELEMENTS_PER_PAGE).limit(ELEMENTS_PER_PAGE)
+#     num_pages = int(num_total_images / ELEMENTS_PER_PAGE)
 
-    page_shortcuts = []
+#     page_shortcuts = []
 
-    # Add first three pages
-    page_shortcuts.append(0)
-    if num_pages > 1: page_shortcuts.append(1)
-    if num_pages > 2: page_shortcuts.append(2)
+#     # Add first three pages
+#     page_shortcuts.append(0)
+#     if num_pages > 1: page_shortcuts.append(1)
+#     if num_pages > 2: page_shortcuts.append(2)
 
-    # Add last two pages
-    page_shortcuts.append(num_pages - 1)
-    page_shortcuts.append(num_pages - 2)
-    page_shortcuts.append(num_pages - 3)
+#     # Add last two pages
+#     page_shortcuts.append(num_pages - 1)
+#     page_shortcuts.append(num_pages - 2)
+#     page_shortcuts.append(num_pages - 3)
 
-    # Add page before and after current_page
-    page_shortcuts.append(page - 1)
-    page_shortcuts.append(page + 1)
+#     # Add page before and after current_page
+#     page_shortcuts.append(page - 1)
+#     page_shortcuts.append(page + 1)
 
-    # Add current page
-    page_shortcuts.append(page)
+#     # Add current page
+#     page_shortcuts.append(page)
 
-    # Remove duplicates and sort pages
-    page_shortcuts = sorted(set(x for x in page_shortcuts if x >= 0 and x < num_pages))
+#     # Remove duplicates and sort pages
+#     page_shortcuts = sorted(set(x for x in page_shortcuts if x >= 0 and x < num_pages))
 
-    return {
-        'images': images,
-        'current_page': page,
-        'total_pages': num_pages,
-        'page_shortcuts': page_shortcuts
-    }
+#     return {
+#         'images': images,
+#         'current_page': page,
+#         'total_pages': num_pages,
+#         'page_shortcuts': page_shortcuts
+#     }
 
 
 @route('/')
@@ -171,16 +171,16 @@ def fetch_data():
         # Try to get the referer
         referer = request.GET.get('page', request.headers.get('Referer', '/'))
 
-        # Logging image into mongodb:
-        client = pymongo.MongoClient(MONGODB_FULL_URI)
-        db = client[MONGODB_DB]
+        # # Logging image into mongodb:
+        # client = pymongo.MongoClient(MONGODB_FULL_URI)
+        # db = client[MONGODB_DB]
 
-        db['images'].insert_one({
-            'ip': request.remote_addr,
-            'referrer': referer.strip(),
-            'date': datetime.datetime.utcnow(),
-            'image': image_location
-        })
+        # db['images'].insert_one({
+        #     'ip': request.remote_addr,
+        #     'referrer': referer.strip(),
+        #     'date': datetime.datetime.utcnow(),
+        #     'image': image_location
+        # })
 
     return template_data
     
