@@ -8,7 +8,7 @@ Problem is, Jeffrey added a reCaptcha to his viewer, rendering my extension usel
 
 This _image metadata viewer_ uses:
 
-* Python 2.7
+* Python 3.x
 * [Bottle web framework](http://bottlepy.org/docs/dev/)
 * [Jinja2 template engine](http://jinja.pocoo.org/)
 * And more importantly, [Phil Harvey's ExifTool](http://www.sno.phy.queensu.ca/~phil/exiftool/) to get the metadata.
