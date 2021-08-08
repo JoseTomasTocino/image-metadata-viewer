@@ -82,8 +82,12 @@
 
     <hr>
 
+    {% if invalid_image %}
+        <div class="alert alert-danger">Error fetching image</div>
+    {% endif %}
+
     <div class="own-container">
-        {% if image_location %}
+        {% if image_location and not invalid_image %}
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Image preview</strong></div>
             <div class="panel-body">
@@ -92,7 +96,7 @@
         </div>
         {% endif %}
 
-        {% if has_location %}
+        {% if has_location%}
         <div class="panel panel-default">
             <div class="panel-heading">
                 <strong>Image GPS Location</strong>
