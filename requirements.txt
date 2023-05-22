@@ -2,4 +2,4 @@ pymongo
 bottle==0.12.19
 Jinja2==2.11.3
 MarkupSafe==0.23
-requests==2.20.0
+requests==2.31.0
