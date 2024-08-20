@@ -17,5 +17,5 @@ At the end of the day, this app is just a simple web front-end for `exiftool`.
 
 ## Deployment
 
-This app is currently deployed on [Heroku: http://metadataviewer.herokuapp.com](https://metadataviewer.herokuapp.com). If you want to deploy it privately or something like that, just fetch the code and run `main.py`. It will start listening at port 5000.
+This app is currently deployed on [Render.com](https://image-metadata-viewer.onrender.com/). If you want to deploy it privately or something like that, just fetch the code and run `main.py`.
 
