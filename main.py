@@ -16,7 +16,7 @@ from bottle import jinja2_view as view, jinja2_template as template
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-EXIFTOOL_PATH = 'exiftool/exiftool'
+EXIFTOOL_PATH = os.path.join(os.path.dirname(__file__), 'exiftool/exiftool')
 
 
 @route('/favicon.ico')
@@ -60,10 +60,37 @@ def fetch_data():
     logging.info("Image fetched properly")
     f = BytesIO(response.content)
 
-    logging.info("Running exiftool process...")
-    process = subprocess.Popen([EXIFTOOL_PATH, '-g0', '-j', '-c', '%+.6f', '-'],
+    logging.info(f"Running exiftool process, binary path = {EXIFTOOL_PATH}...")
+    
+    if not os.path.exists(EXIFTOOL_PATH):
+        logging.error("Binary exiftool not found at path")
+        template_data['invalid_image'] = "problem running process"
+
+        return template_data
+    
+    if not os.access(EXIFTOOL_PATH, os.X_OK):
+        logging.error("Binary exiftool is not runnable")
+        template_data['invalid_image'] = "problem running process"
+
+        return template_data
+    
+    try:
+        process = subprocess.Popen([EXIFTOOL_PATH, '-g0', '-j', '-c', '%+.6f', '-'],
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE)
+    except OSError as e:
+        logging.error(f"problem running process, received oserror: {e.strerror}")
+        template_data['invalid_image'] = "problem running process"
+
+        return template_data
+
+    except ValueError:
+        logging.error(f"problem running process, received ValueError")
+        template_data['invalid_image'] = "problem running process"
+
+        return template_data
+
+
     output, output_err = process.communicate(f.read())
 
     # TODO: check for errors running process
